@@ -7,13 +7,13 @@
 
 /**
  * @ngdoc overview
- * @name djangoRestResources
+ * @name djangoRESTResources
  * @description
  */
 
 /**
  * @ngdoc object
- * @name djangoRestResources.$djResource
+ * @name djangoRESTResources.$djResource
  * @requires $http
  *
  * @description
@@ -264,7 +264,7 @@
       </doc:scenario>
     </doc:example>
  */
-angular.module('ngResource', ['ng']).
+angular.module('djangoRESTResources', ['ng']).
   factory('$djResource', ['$http', '$parse', function($http, $parse) {
     var DEFAULT_ACTIONS = {
       'get':    {method:'GET'},
