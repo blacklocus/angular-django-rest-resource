@@ -361,7 +361,7 @@ angular.module('ngResource', ['ng']).
         });
 
         // set the url
-        config.url = url.replace(/\/?#$/, '').replace(/\/*$/, '');
+        config.url = url.replace(/\/?#$/, '');
 
         // set params - delegate param encoding to $http
         forEach(params, function(value, key){
