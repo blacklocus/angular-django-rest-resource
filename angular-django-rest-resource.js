@@ -23,7 +23,7 @@
  *  - If an isArray=True request receives a JSON _object_ containing a `count` field (instead of a JS array), assume
  *  that the REST endpoint has `paginate_by` set. The results are then streamed a page at a time into the promise object
  *  and any success callbacks are deferred until the last page returns successfully.
- *  - URLs are assumed to have the trailing slashed, as is the Django way of doing things.
+ *  - URLs are assumed to have the trailing slashes, as is the Django way of doing things.
  *
  * # Installation
  * Included  `angular-django-rest-resource.js`
@@ -361,7 +361,7 @@ angular.module('djangoRESTResources', ['ng']).
         });
 
         // set the url
-        config.url = url.replace(/\/?#$/, '');
+        config.url = url.replace(/#$/, '');
 
         // set params - delegate param encoding to $http
         forEach(params, function(value, key){
