@@ -451,28 +451,56 @@ angular.module('djangoRESTResources', ['ng']).
 
           function markResolved() { value.$resolved = true; }
 
+          //console.log("httpConfig: " + httpConfig)
+          //console.log("httpConfig.data: " + httpConfig.data)
+
           promise = $http(httpConfig);
           value.$resolved = false;
 
           promise.then(markResolved, markResolved);
           value.$then = promise.then(function(response) {
+            // Success wrapper
+
             var data = response.data;
             var then = value.$then, resolved = value.$resolved;
+
+            var deferSuccess = false;
 
             if (data) {
               if (action.isArray) {
                 value.length = 0;
-                forEach(data, function(item) {
-                  value.push(new Resource(item));
-                });
+
+                // If it's an object with count and results, it's a pagination container, not an array:
+                if (data.hasOwnProperty("count") && data.hasOwnProperty("results")) {
+
+                  // Don't call success callback until the last page has been accepted:
+                  deferSuccess = true;
+
+                  var paginator = function recursivePaginator(data) {
+                    forEach(data.results, function(item) {
+                      value.push(new Resource(item));
+                    });
+
+
+                  };
+                } else {
+                  forEach(data, function(item) {
+                    value.push(new Resource(item));
+                  });
+                }
               } else {
+                // Not an isArray action
                 copy(data, value);
+
+                // Copy operation destroys value's original properties, so restore some of the old ones:
                 value.$then = then;
                 value.$resolved = resolved;
               }
             }
 
-            (success||noop)(value, response.headers);
+            if(!deferSuccess) {
+              (success||noop)(value, response.headers);
+            }
 
             response.resource = value;
             return response;
