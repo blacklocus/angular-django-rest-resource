@@ -13,7 +13,7 @@
 
 /**
  * @ngdoc object
- * @name djangoRESTResources.$djResource
+ * @name djangoRESTResources.djResource
  * @requires $http
  *
  * @description
@@ -32,12 +32,12 @@
  *
  *        angular.module('app', ['djangoRestResources']);
  *
- * now you inject $djResource into any of your Angular things.
+ * now you inject djResource into any of your Angular things.
  *
  * @param {string} url A parametrized URL template with parameters prefixed by `:` as in
  *   `/user/:username`. If you are using a URL with a port number (e.g.
  *   `http://example.com:8080/api`), you'll need to escape the colon character before the port
- *   number, like this: `$djResource('http://example.com\\:8080/api')`.
+ *   number, like this: `djResource('http://example.com\\:8080/api')`.
  *
  * @param {Object=} paramDefaults Default values for `url` parameters. These can be overridden in
  *   `actions` methods. If any of the parameter value is a function, it will be executed every time
@@ -104,14 +104,14 @@
  *   as  methods with the `$` prefix. This allows you to easily perform CRUD operations (create,
  *   read, update, delete) on server-side data like this:
  *   <pre>
-        var User = $djResource('/user/:userId', {userId:'@id'});
+        var User = djResource('/user/:userId', {userId:'@id'});
         var user = User.get({userId:123}, function() {
           user.abc = true;
           user.$save();
         });
      </pre>
  *
- *   It is important to realize that invoking a $djResource object method immediately returns an
+ *   It is important to realize that invoking a djResource object method immediately returns an
  *   empty reference (object or array depending on `isArray`). Once the data is returned from the
  *   server the existing reference is populated with the actual data. This is a useful trick since
  *   usually the resource is assigned to a model which is then rendered by the view. Having an empty
@@ -151,7 +151,7 @@
  *
  * <pre>
      // Define CreditCard class
-     var CreditCard = $djResource('/user/:userId/card/:cardId',
+     var CreditCard = djResource('/user/:userId/card/:cardId',
       {userId:123, cardId:'@id'}, {
        charge: {method:'POST', params:{charge:true}}
       });
@@ -193,7 +193,7 @@
  * operations (create, read, update, delete) on server-side data.
 
    <pre>
-     var User = $djResource('/user/:userId', {userId:'@id'});
+     var User = djResource('/user/:userId', {userId:'@id'});
      var user = User.get({userId:123}, function() {
        user.abc = true;
        user.$save();
@@ -205,7 +205,7 @@
  * could rewrite the above example and get access to http headers as:
  *
    <pre>
-     var User = $djResource('/user/:userId', {userId:'@id'});
+     var User = djResource('/user/:userId', {userId:'@id'});
      User.get({userId:123}, function(u, getResponseHeaders){
        u.abc = true;
        u.$save(function(u, putResponseHeaders) {
@@ -217,13 +217,13 @@
 
  * # Buzz client
 
-   Let's look at what a buzz client created with the `$djResource` service looks like:
+   Let's look at what a buzz client created with the `djResource` service looks like:
     <doc:example>
       <doc:source jsfiddle="false">
        <script>
-         function BuzzController($djResource) {
+         function BuzzController(djResource) {
            this.userId = 'googlebuzz';
-           this.Activity = $djResource(
+           this.Activity = djResource(
              'https://www.googleapis.com/buzz/v1/activities/:userId/:visibility/:activityId/:comments',
              {alt:'json', callback:'JSON_CALLBACK'},
              {get:{method:'JSONP', params:{visibility:'@self'}}, replies: {method:'JSONP', params:{visibility:'@self', comments:'@comments'}}}
@@ -238,7 +238,7 @@
              activity.replies = this.Activity.replies({userId:this.userId, activityId:activity.id});
            }
          };
-         BuzzController.$inject = ['$djResource'];
+         BuzzController.$inject = ['djResource'];
        </script>
 
        <div ng-controller="BuzzController">
@@ -264,7 +264,7 @@
     </doc:example>
  */
 angular.module('djangoRESTResources', ['ng']).
-  factory('$djResource', ['$http', '$parse', function($http, $parse) {
+  factory('djResource', ['$http', '$parse', function($http, $parse) {
     var DEFAULT_ACTIONS = {
       'get':    {method:'GET'},
       'save':   {method:'POST'},
