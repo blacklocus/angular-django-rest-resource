@@ -30,7 +30,7 @@
  *
  * Load the module:
  *
- *        angular.module('app', ['djangoRestResources']);
+ *        angular.module('app', ['djangoRESTResources']);
  *
  * now you inject djResource into any of your Angular things.
  *
@@ -388,6 +388,39 @@ angular.module('djangoRESTResources', ['ng']).
         return ids;
       }
 
+      function extractURIParams(queryString) {
+        var queryStart = queryString.indexOf('?');
+        if (queryStart > -1) {
+          var uri = queryString.substring(queryStart + 1);
+        } else {
+          return null;
+        }
+
+        uri = uri.replace(/&+/g, '&').replace(/^\?*&*|&+$/g, '');
+
+        var parameters = {};
+        var pairs = uri.split('&');
+        var length = splits.length;
+        var queryPair, key, value;
+
+        for (var i = 0; i < length; i++) {
+          queryPair = pairs[i].split('=');
+          key = decodeURIComponent(queryPair.shift().replace(/\+/g, '%20'));
+          value = queryPair.length ? decodeURIComponent(queryPair.join('=').replace(/\+/g, '%20')) : null;
+
+          if (parameters[key]) {
+            if (typeof items[key] === "string") {
+              parameters[key] = [parameters[key]];
+            }
+            parameters[key].push(value);
+          } else {
+            parameters[key] = value;
+          }
+        }
+
+        return parameters;
+      }
+
       function Resource(value){
         copy(value || {}, this);
       }
@@ -450,8 +483,8 @@ angular.module('djangoRESTResources', ['ng']).
 
           function markResolved() { value.$resolved = true; }
 
-          //console.log("httpConfig: " + httpConfig)
-          //console.log("httpConfig.data: " + httpConfig.data)
+          console.log("httpConfig: " + JSON.stringify(httpConfig));
+          console.log("httpConfig.data: " + JSON.stringify(httpConfig.data));
 
           promise = $http(httpConfig);
           value.$resolved = false;
@@ -471,6 +504,7 @@ angular.module('djangoRESTResources', ['ng']).
 
                 // If it's an object with count and results, it's a pagination container, not an array:
                 if (data.hasOwnProperty("count") && data.hasOwnProperty("results")) {
+                  console.log("It's a paginating one.")
 
                   // Don't call success callback until the last page has been accepted:
                   deferSuccess = true;
@@ -478,11 +512,22 @@ angular.module('djangoRESTResources', ['ng']).
                   var paginator = function recursivePaginator(data) {
                     forEach(data.results, function(item) {
                       value.push(new Resource(item));
+                      if (data.next == null) {
+                        //We've reached the last page, call the original success callback with the concatenated pages of data.
+                        deferSuccess = false;
+                      } else {
+                          var next_params = extractURIParams(data.next);
+                          var next_config = copy(httpConfig);
+                          next_config.url = data.next;
+                          next_config.params = next_params;
+                          $http(next_config, function(next_data) { recursivePaginator(next_data); }, error);
+                      }
                     });
 
 
                   };
                 } else {
+                  //Not paginated, push into array as normal.
                   forEach(data, function(item) {
                     value.push(new Resource(item));
                   });
