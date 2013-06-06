@@ -20,8 +20,8 @@ Add this AngularJS module as a dependency to your AngularJS application:
 (where 'app' is whatever you've named your AngularJS application).
 
 
-In your controllers and anything that needs to interact with the Django REST Framework services, inject the `djResources` object.
-Then you can create class-like objects that represent (and interact with) your Django REST Framework resources:
+In your controllers and anything that needs to interact with the Django REST Framework services, inject the `djResource`
+service. Then you can create class-like objects that represent (and interact with) your Django REST Framework resources:
 
         var Poll = djResource('/polls/:pollId/', {pollId:'@id'});
 
