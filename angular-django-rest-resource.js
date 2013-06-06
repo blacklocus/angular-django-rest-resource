@@ -3,7 +3,7 @@
 //Portions of this file:
 //Copyright (c) 2010-2012 Google, Inc. http://angularjs.org
 //Those portions modified, used, or copied under permissions granted by the MIT license. See:
-// https://raw.github.com/angular/angular.js/master/LICENSE
+// https://raw.github.com/angular/angular.js/9480136d9f062ec4b8df0a35914b48c0d61e0002/LICENSE
 
 /**
  * @ngdoc overview
@@ -26,7 +26,7 @@
  *  - URLs are assumed to have the trailing slashes, as is the Django way of doing things.
  *
  * # Installation
- * Included  `angular-django-rest-resource.js`
+ * Include `angular-django-rest-resource.js`
  *
  * Load the module:
  *
@@ -80,7 +80,7 @@
  *     response body and headers and returns its transformed (typically deserialized) version.
  *   - **`cache`** – `{boolean|Cache}` – If true, a default $http cache will be used to cache the
  *     GET request, otherwise if a cache instance built with
- *     {@link ng.$cacheFactory $cacheFactory}, this cache will be used for
+ *     {@link http://docs.angularjs.org/api/ng.$cacheFactory $cacheFactory}, this cache will be used for
  *     caching.
  *   - **`timeout`** – `{number}` – timeout in milliseconds.
  *   - **`withCredentials`** - `{boolean}` - whether to to set the `withCredentials` flag on the
@@ -98,8 +98,8 @@
  *         'remove': {method:'DELETE'},
  *         'delete': {method:'DELETE'} };
  *
- *   Calling these methods invoke an {@link ng.$http} with the specified http method,
- *   destination and parameters. When the data is returned from the server then the object is an
+ *   Calling these methods invoke an {@link http://docs.angularjs.org/api/ng.$http $http} with the specified http
+ *   method, destination and parameters. When the data is returned from the server then the object is an
  *   instance of the resource class. The actions `save`, `remove` and `delete` are available on it
  *   as  methods with the `$` prefix. This allows you to easily perform CRUD operations (create,
  *   read, update, delete) on server-side data like this:
@@ -111,157 +111,35 @@
         });
      </pre>
  *
- *   It is important to realize that invoking a djResource object method immediately returns an
- *   empty reference (object or array depending on `isArray`). Once the data is returned from the
- *   server the existing reference is populated with the actual data. This is a useful trick since
- *   usually the resource is assigned to a model which is then rendered by the view. Having an empty
- *   object results in no rendering, once the data arrives from the server then the object is
- *   populated with the data and the view automatically re-renders itself showing the new data. This
- *   means that in most case one never has to write a callback function for the action methods.
+ *   Invoking a djResource object method immediately returns an empty reference (object or array depending
+ *   on `isArray`). Once the data is returned from the server the existing reference is populated with the actual data.
  *
  *   The action methods on the class object or instance object can be invoked with the following
  *   parameters:
  *
- *   - HTTP GET "class" actions: `Resource.action([parameters], [success], [error])`
- *   - non-GET "class" actions: `Resource.action([parameters], postData, [success], [error])`
+ *   - HTTP GET "class" actions: `DjangoRESTResource.action([parameters], [success], [error])`
+ *   - non-GET "class" actions: `DjangoRESTResource.action([parameters], postData, [success], [error])`
  *   - non-GET instance actions:  `instance.$action([parameters], [success], [error])`
  *
  *
- *   The Resource instances and collection have these additional properties:
+ *   The DjangoRESTResource instances and collection have these additional properties:
  *
- *   - `$then`: the `then` method of a {@link ng.$q promise} derived from the underlying
- *     {@link ng.$http $http} call.
+ *   - `$then`: the `then` method of a {@link http://docs.angularjs.org/api/ng.$q promise} derived from the underlying
+ *     {@link http://docs.angularjs.org/api/ng.$http $http} call.
  *
  *     The success callback for the `$then` method will be resolved if the underlying `$http` requests
  *     succeeds.
  *
- *     The success callback is called with a single object which is the {@link ng.$http http response}
+ *     The success callback is called with a single object which is the
+ *     {@link http://docs.angularjs.org/api/ng.$http http response}
  *     object extended with a new property `resource`. This `resource` property is a reference to the
  *     result of the resource action — resource object or array of resources.
  *
- *     The error callback is called with the {@link ng.$http http response} object when an http
- *     error occurs.
+ *     The error callback is called with the {@link http://docs.angularjs.org/api/ng.$http http response} object when
+ *     an http error occurs.
  *
  *   - `$resolved`: true if the promise has been resolved (either with success or rejection);
- *     Knowing if the Resource has been resolved is useful in data-binding.
- *
- * @example
- *
- * # Credit card resource
- *
- * <pre>
-     // Define CreditCard class
-     var CreditCard = djResource('/user/:userId/card/:cardId',
-      {userId:123, cardId:'@id'}, {
-       charge: {method:'POST', params:{charge:true}}
-      });
-
-     // We can retrieve a collection from the server
-     var cards = CreditCard.query(function() {
-       // GET: /user/123/card
-       // server returns: [ {id:456, number:'1234', name:'Smith'} ];
-
-       var card = cards[0];
-       // each item is an instance of CreditCard
-       expect(card instanceof CreditCard).toEqual(true);
-       card.name = "J. Smith";
-       // non GET methods are mapped onto the instances
-       card.$save();
-       // POST: /user/123/card/456 {id:456, number:'1234', name:'J. Smith'}
-       // server returns: {id:456, number:'1234', name: 'J. Smith'};
-
-       // our custom method is mapped as well.
-       card.$charge({amount:9.99});
-       // POST: /user/123/card/456?amount=9.99&charge=true {id:456, number:'1234', name:'J. Smith'}
-     });
-
-     // we can create an instance as well
-     var newCard = new CreditCard({number:'0123'});
-     newCard.name = "Mike Smith";
-     newCard.$save();
-     // POST: /user/123/card {number:'0123', name:'Mike Smith'}
-     // server returns: {id:789, number:'01234', name: 'Mike Smith'};
-     expect(newCard.id).toEqual(789);
- * </pre>
- *
- * The object returned from this function execution is a resource "class" which has "static" method
- * for each action in the definition.
- *
- * Calling these methods invoke `$http` on the `url` template with the given `method`, `params` and `headers`.
- * When the data is returned from the server then the object is an instance of the resource type and
- * all of the non-GET methods are available with `$` prefix. This allows you to easily support CRUD
- * operations (create, read, update, delete) on server-side data.
-
-   <pre>
-     var User = djResource('/user/:userId', {userId:'@id'});
-     var user = User.get({userId:123}, function() {
-       user.abc = true;
-       user.$save();
-     });
-   </pre>
- *
- * It's worth noting that the success callback for `get`, `query` and other method gets passed
- * in the response that came from the server as well as $http header getter function, so one
- * could rewrite the above example and get access to http headers as:
- *
-   <pre>
-     var User = djResource('/user/:userId', {userId:'@id'});
-     User.get({userId:123}, function(u, getResponseHeaders){
-       u.abc = true;
-       u.$save(function(u, putResponseHeaders) {
-         //u => saved user object
-         //putResponseHeaders => $http header getter
-       });
-     });
-   </pre>
-
- * # Buzz client
-
-   Let's look at what a buzz client created with the `djResource` service looks like:
-    <doc:example>
-      <doc:source jsfiddle="false">
-       <script>
-         function BuzzController(djResource) {
-           this.userId = 'googlebuzz';
-           this.Activity = djResource(
-             'https://www.googleapis.com/buzz/v1/activities/:userId/:visibility/:activityId/:comments',
-             {alt:'json', callback:'JSON_CALLBACK'},
-             {get:{method:'JSONP', params:{visibility:'@self'}}, replies: {method:'JSONP', params:{visibility:'@self', comments:'@comments'}}}
-           );
-         }
-
-         BuzzController.prototype = {
-           fetch: function() {
-             this.activities = this.Activity.get({userId:this.userId});
-           },
-           expandReplies: function(activity) {
-             activity.replies = this.Activity.replies({userId:this.userId, activityId:activity.id});
-           }
-         };
-         BuzzController.$inject = ['djResource'];
-       </script>
-
-       <div ng-controller="BuzzController">
-         <input ng-model="userId"/>
-         <button ng-click="fetch()">fetch</button>
-         <hr/>
-         <div ng-repeat="item in activities.data.items">
-           <h1 style="font-size: 15px;">
-             <img src="{{item.actor.thumbnailUrl}}" style="max-height:30px;max-width:30px;"/>
-             <a href="{{item.actor.profileUrl}}">{{item.actor.name}}</a>
-             <a href ng-click="expandReplies(item)" style="float: right;">Expand replies: {{item.links.replies[0].count}}</a>
-           </h1>
-           {{item.object.content | html}}
-           <div ng-repeat="reply in item.replies.data.items" style="margin-left: 20px;">
-             <img src="{{reply.actor.thumbnailUrl}}" style="max-height:30px;max-width:30px;"/>
-             <a href="{{reply.actor.profileUrl}}">{{reply.actor.name}}</a>: {{reply.content | html}}
-           </div>
-         </div>
-       </div>
-      </doc:source>
-      <doc:scenario>
-      </doc:scenario>
-    </doc:example>
+ *     Knowing if the DjangoRESTResource has been resolved is useful in data-binding.
  */
 angular.module('djangoRESTResources', ['ng']).
   factory('djResource', ['$http', '$parse', function($http, $parse) {
@@ -373,7 +251,7 @@ angular.module('djangoRESTResources', ['ng']).
     };
 
 
-    function ResourceFactory(url, paramDefaults, actions) {
+    function DjangoRESTResourceFactory(url, paramDefaults, actions) {
       var route = new Route(url);
 
       actions = extend({}, DEFAULT_ACTIONS, actions);
@@ -388,14 +266,14 @@ angular.module('djangoRESTResources', ['ng']).
         return ids;
       }
 
-      function Resource(value){
+      function DjangoRESTResource(value){
         copy(value || {}, this);
       }
 
       forEach(actions, function(action, name) {
         action.method = angular.uppercase(action.method);
         var hasBody = action.method == 'POST' || action.method == 'PUT' || action.method == 'PATCH';
-        Resource[name] = function(a1, a2, a3, a4) {
+        DjangoRESTResource[name] = function(a1, a2, a3, a4) {
           var params = {};
           var data;
           var success = noop;
@@ -436,7 +314,7 @@ angular.module('djangoRESTResources', ['ng']).
               arguments.length + " arguments.";
           }
 
-          var value = this instanceof Resource ? this : (action.isArray ? [] : new Resource(data));
+          var value = this instanceof DjangoRESTResource ? this : (action.isArray ? [] : new DjangoRESTResource(data));
           var httpConfig = {},
               promise;
 
@@ -473,7 +351,7 @@ angular.module('djangoRESTResources', ['ng']).
 
                   var paginator = function recursivePaginator(data) {
                     forEach(data.results, function(item) {
-                      value.push(new Resource(item));
+                      value.push(new DjangoRESTResource(item));
                     });
                     if (data.next == null) {
                       //We've reached the last page, call the original success callback with the concatenated pages of data.
@@ -488,7 +366,7 @@ angular.module('djangoRESTResources', ['ng']).
                 } else {
                   //Not paginated, push into array as normal.
                   forEach(data, function(item) {
-                    value.push(new Resource(item));
+                    value.push(new DjangoRESTResource(item));
                   });
                 }
               } else {
@@ -513,7 +391,7 @@ angular.module('djangoRESTResources', ['ng']).
         };
 
 
-        Resource.prototype['$' + name] = function(a1, a2, a3) {
+        DjangoRESTResource.prototype['$' + name] = function(a1, a2, a3) {
           var params = extractParams(this),
               success = noop,
               error;
@@ -535,16 +413,16 @@ angular.module('djangoRESTResources', ['ng']).
               arguments.length + " arguments.";
           }
           var data = hasBody ? this : undefined;
-          Resource[name].call(this, params, data, success, error);
+          DjangoRESTResource[name].call(this, params, data, success, error);
         };
       });
 
-      Resource.bind = function(additionalParamDefaults){
-        return ResourceFactory(url, extend({}, paramDefaults, additionalParamDefaults), actions);
+      DjangoRESTResource.bind = function(additionalParamDefaults){
+        return DjangoRESTResourceFactory(url, extend({}, paramDefaults, additionalParamDefaults), actions);
       };
 
-      return Resource;
+      return DjangoRESTResource;
     }
 
-    return ResourceFactory;
+    return DjangoRESTResourceFactory;
   }]);
