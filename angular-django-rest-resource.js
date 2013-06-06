@@ -351,10 +351,7 @@ angular.module('djangoRESTResources', ['ng']).
 
                   var paginator = function recursivePaginator(data) {
                     // If there is a next page, go ahead and request it before parsing our results. Less wasted time.
-                    if (data.next == null) {
-                      // We've reached the last page, call the original success callback with the concatenated pages of data.
-                      (success||noop)(value, response.headers);
-                    } else {
+                    if (data.next !== null) {
                       var next_config = copy(httpConfig);
                       next_config.url = data.next;
                       $http(next_config).success(function(next_data) { recursivePaginator(next_data); }).error(error);
@@ -363,6 +360,10 @@ angular.module('djangoRESTResources', ['ng']).
                     forEach(data.results, function(item) {
                       value.push(new DjangoRESTResource(item));
                     });
+                    if (data.next == null) {
+                      // We've reached the last page, call the original success callback with the concatenated pages of data.
+                      (success||noop)(value, response.headers);
+                    }
                   };
                   paginator(data);
                 } else {
