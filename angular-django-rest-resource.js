@@ -353,7 +353,7 @@ angular.module('djangoRESTResources', ['ng']).
                     // If there is a next page, go ahead and request it before parsing our results. Less wasted time.
                     if (data.next == null) {
                       // We've reached the last page, call the original success callback with the concatenated pages of data.
-                      deferSuccess = false;
+                      (success||noop)(value, response.headers);
                     } else {
                       var next_config = copy(httpConfig);
                       next_config.url = data.next;
@@ -381,7 +381,7 @@ angular.module('djangoRESTResources', ['ng']).
               }
             }
 
-            if(!deferSuccess) {
+            if (!deferSuccess) {
               (success||noop)(value, response.headers);
             }
 
