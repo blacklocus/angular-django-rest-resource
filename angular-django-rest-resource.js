@@ -379,6 +379,7 @@ angular.module('djangoRESTResources', ['ng']).
                 // Copy operation destroys value's original properties, so restore some of the old ones:
                 value.$then = then;
                 value.$resolved = resolved;
+                value.$promise = promise;
               }
             }
 
