@@ -1,0 +1,31 @@
+{
+  "name": "angular-django-rest-resource",
+  "main": "angular-django-rest-resource.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/blacklocus/angular-django-rest-resource",
+  "authors": [
+    "BlackLocus",
+    "Justin Turner Arthur",
+    "Contributors"
+  ],
+  "description": "An AngularJS module that provides a resource-generation service similar to ngResource, but optimized for the Django REST Framework.",
+  "keywords": [
+    "AngularJS",
+    "Django",
+    "REST",
+    "Framework",
+    "Django",
+    "Angular",
+    "paginate",
+    "pagination"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "**/.md",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
