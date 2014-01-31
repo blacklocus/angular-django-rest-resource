@@ -7,6 +7,12 @@ Django REST Framework. The biggest features:
 * Trailing slashes allowed in the resource URLs per the Django community norm.
 * The `isArray` methods like `query` allow for paginated responses. The pages will be streamed into the promise object.
 
+Installation
+-----
+Download angular-django-rest-resource.js and put it in your project. You may also do it the bower way:
+
+        bower install angular-django-rest-resource
+
 Usage
 -----
 Do this somewhere in your application HTML:
