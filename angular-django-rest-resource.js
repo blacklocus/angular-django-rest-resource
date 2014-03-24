@@ -353,6 +353,7 @@ angular.module('djangoRESTResources', ['ng']).
                     // If there is a next page, go ahead and request it before parsing our results. Less wasted time.
                     if (data.next !== null) {
                       var next_config = copy(httpConfig);
+                      next_config.params = {};
                       next_config.url = data.next;
                       $http(next_config).success(function(next_data) { recursivePaginator(next_data); }).error(error);
                     }
