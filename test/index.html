@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>Django Rest test</title>
+    <style>
+        .plant-box {
+            display: inline;
+            background-color: lightgray;
+            margin: 3px;
+        }
+    </style>
+    <script type="text/javascript" src="http:ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+    <script type="text/javascript" src="../angular-django-rest-resource.js"></script>
+    <script type="text/javascript">
+        angular.module('app', ['djangoRESTResources']);
+        function DJTestCtrl($scope, djResource) {
+            var Plant = djResource('http://localhost\\:8000/plants/:id/', {}, {});
+            $scope.plants = Plant.query();
+        }
+    </script>
+</head>
+
+<body ng-app="app" ng-controller="DJTestCtrl">
+    Records retrieved from the server so far: ({{ plants.length }}):
+    <ul>
+        <li ng-repeat="plant in plants" class="plant-box">{{plant.name}}</li>
+    </ul>
+</body>
+
+</html>
