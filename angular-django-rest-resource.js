@@ -93,7 +93,8 @@
  *   optionally extended with custom `actions`. The default set contains these actions:
  *
  *       { 'get':    {method:'GET'},
- *         'save':   {method:'POST'},
+ *         'save':   {method:'POST', method_if_field_has_value:['id', 'PUT']},
+ *         'update': {method:'PUT'},
  *         'query':  {method:'GET', isArray:true},
  *         'remove': {method:'DELETE'},
  *         'delete': {method:'DELETE'} };
@@ -145,7 +146,8 @@ angular.module('djangoRESTResources', ['ng']).
   factory('djResource', ['$http', '$parse', function($http, $parse) {
     var DEFAULT_ACTIONS = {
       'get':    {method:'GET'},
-      'save':   {method:'POST'},
+      'save':   {method:'POST', method_if_field_has_value: ['id','PUT']},
+      'update': {method:'PUT'},
       'query':  {method:'GET', isArray:true},
       'remove': {method:'DELETE'},
       'delete': {method:'DELETE'}
@@ -319,7 +321,13 @@ angular.module('djangoRESTResources', ['ng']).
               promise;
 
           forEach(action, function(value, key) {
-            if (key != 'params' && key != 'isArray' ) {
+            if (key == 'method' && action.hasOwnProperty('method_if_field_has_value')) {
+              // Check if the action's HTTP method is dependent on a field holding a value ('id' for example)
+              var field = action.method_if_field_has_value[0];
+              var fieldDependentMethod = action.method_if_field_has_value[1];
+              httpConfig.method =
+                (data.hasOwnProperty(field) && data[field] !== null) ? fieldDependentMethod : action.method;
+            } else if (key != 'params' && key != 'isArray' ) {
               httpConfig[key] = copy(value);
             }
           });
