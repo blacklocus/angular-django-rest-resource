@@ -426,7 +426,7 @@ angular.module('djangoRESTResources', ['ng']).
               arguments.length + " arguments.";
           }
           var data = hasBody ? this : undefined;
-          DjangoRESTResource[name].call(this, params, data, success, error);
+          return DjangoRESTResource[name].call(this, params, data, success, error);
         };
       });
 
