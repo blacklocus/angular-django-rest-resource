@@ -1,0 +1,22 @@
+[
+  {
+    "pk": 1,
+    "model": "test_rest.plant",
+    "fields": {
+      "common_name": "Venus Flytrap",
+      "scientific_name": "Dionaea muscipula",
+      "is_evergreen": false,
+      "is_succulent": false
+    }
+  },
+  {
+    "pk": 2,
+    "model": "test_rest.plant",
+    "fields": {
+      "common_name": "Sensitive Plant",
+      "scientific_name": "Mimosa pudica",
+      "is_evergreen": false,
+      "is_succulent": false
+    }
+  }
+]
