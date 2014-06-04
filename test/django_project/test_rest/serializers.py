@@ -3,11 +3,11 @@ from test_rest.models import Animal
 from test_rest.models import Plant
 
 
-class AnimalSerializer(serializers.HyperlinkedModelSerializer):
+class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
 
 
-class PlantSerializer(serializers.HyperlinkedModelSerializer):
+class PlantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plant
