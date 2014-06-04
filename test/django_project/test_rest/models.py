@@ -1,7 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
 class Plant(models.Model):
     common_name = models.CharField(max_length=512)
     scientific_name = models.CharField(max_length=1024)
