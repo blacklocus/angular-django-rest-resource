@@ -8,12 +8,12 @@
             margin: 3px;
         }
     </style>
-    <script type="text/javascript" src="http:ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
-    <script type="text/javascript" src="../angular-django-rest-resource.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+    <script type="text/javascript" src="/angular-django-rest-resource.js"></script>
     <script type="text/javascript">
         angular.module('app', ['djangoRESTResources']);
         function DJTestCtrl($scope, djResource) {
-            var Plant = djResource('http://localhost\\:8000/plants/:id/', {}, {});
+            var Plant = djResource('/plants/:id/', {}, {});
             $scope.plants = Plant.query();
         }
     </script>
@@ -22,7 +22,7 @@
 <body ng-app="app" ng-controller="DJTestCtrl">
     Records retrieved from the server so far: ({{ plants.length }}):
     <ul>
-        <li ng-repeat="plant in plants" class="plant-box">{{plant.name}}</li>
+        <li ng-repeat="plant in plants" class="plant-box">{{plant.common_name}}</li>
     </ul>
 </body>
 
