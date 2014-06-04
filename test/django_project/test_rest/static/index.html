@@ -1,8 +1,8 @@
 <html>
 <head>
-    <title>Django Rest test</title>
+    <title>Angular Django REST Resource Text</title>
     <style>
-        .plant-box {
+        .organism-box {
             display: inline;
             background-color: lightgray;
             margin: 3px;
@@ -13,17 +13,43 @@
     <script type="text/javascript">
         angular.module('app', ['djangoRESTResources']);
         function DJTestCtrl($scope, djResource) {
-            var Plant = djResource('/plants/:id/', {}, {});
+            var Animal = djResource('/animals/:id/', {'id': "@id"});
+            var Plant = djResource('/plants/:id/', {'id': "@id"});
+            $scope.animals = Animal.query();
             $scope.plants = Plant.query();
+
+            $scope.newPlant = new Plant;
         }
     </script>
 </head>
 
 <body ng-app="app" ng-controller="DJTestCtrl">
-    Records retrieved from the server so far: ({{ plants.length }}):
+    Animals retrieved from the server so far: ({{ animals.length }}):
     <ul>
-        <li ng-repeat="plant in plants" class="plant-box">{{plant.common_name}}</li>
+        <li ng-repeat="animal in animals" class="organism-box">{{animal.common_name}}</li>
     </ul>
+    Plants retrieved from the server so far: ({{ plants.length }}):
+    <ul>
+        <li ng-repeat="plant in plants" class="organism-box">{{plant.common_name}}</li>
+    </ul>
+
+    <form ng-submit="newPlant.$save()">
+      <fieldset>
+        <legend>Add a plant</legend>
+        <input ng-model="newPlant.common_name" />
+        <input ng-model="newPlant.scientific_name" />
+        <button type="submit">Create!</button>
+      </fieldset>
+    </form>
+
+    <form ng-submit="plants[0].$save()">
+      <fieldset>
+        <legend>Edit a plant</legend>
+        <input ng-model="plants[0].common_name" />
+        <input ng-model="plants[0].scientific_name" />
+        <button type="submit">Update!</button>
+      </fieldset>
+    </form>
 </body>
 
 </html>
