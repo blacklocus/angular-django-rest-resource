@@ -316,7 +316,7 @@ angular.module('djangoRESTResources', ['ng']).
           }
 
           var value = this instanceof DjangoRESTResource ? this : (action.isArray ? [] : new DjangoRESTResource(data));
-          var httpConfig = {},
+          var httpConfig = {headers: {'Authorization': 'Token ' +  $cookies['token']}},
               promise;
 
           forEach(action, function(value, key) {
