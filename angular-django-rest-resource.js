@@ -36,8 +36,7 @@
  *
  * @param {string} url A parametrized URL template with parameters prefixed by `:` as in
  *   `/user/:username`. If you are using a URL with a port number (e.g.
- *   `http://example.com:8080/api`), you'll need to escape the colon character before the port
- *   number, like this: `djResource('http://example.com\\:8080/api')`.
+ *   `http://example.com:8080/api`), it will be respected.
  *
  * @param {Object=} paramDefaults Default values for `url` parameters. These can be overridden in
  *   `actions` methods. If any of the parameter value is a function, it will be executed every time
@@ -93,7 +92,8 @@
  *   optionally extended with custom `actions`. The default set contains these actions:
  *
  *       { 'get':    {method:'GET'},
- *         'save':   {method:'POST'},
+ *         'save':   {method:'POST', method_if_field_has_value:['id', 'PUT']},
+ *         'update': {method:'PUT'},
  *         'query':  {method:'GET', isArray:true},
  *         'remove': {method:'DELETE'},
  *         'delete': {method:'DELETE'} };
@@ -145,7 +145,8 @@ angular.module('djangoRESTResources', ['ng']).
   factory('djResource', ['$http', '$parse', function($http, $parse) {
     var DEFAULT_ACTIONS = {
       'get':    {method:'GET'},
-      'save':   {method:'POST'},
+      'save':   {method:'POST', method_if_field_has_value: ['id','PUT']},
+      'update': {method:'PUT'},
       'query':  {method:'GET', isArray:true},
       'remove': {method:'DELETE'},
       'delete': {method:'DELETE'},
@@ -215,7 +216,7 @@ angular.module('djangoRESTResources', ['ng']).
 
         var urlParams = self.urlParams = {};
         forEach(url.split(/\W/), function(param){
-          if (param && (new RegExp("(^|[^\\\\]):" + param + "(\\W|$)").test(url))) {
+          if (!(new RegExp("^\\d+$").test(param)) && param && (new RegExp("(^|[^\\\\]):" + param + "(\\W|$)").test(url))) {
               urlParams[param] = true;
           }
         });
@@ -321,7 +322,13 @@ angular.module('djangoRESTResources', ['ng']).
               promise;
 
           forEach(action, function(value, key) {
-            if (key != 'params' && key != 'isArray' ) {
+            if (key == 'method' && action.hasOwnProperty('method_if_field_has_value')) {
+              // Check if the action's HTTP method is dependent on a field holding a value ('id' for example)
+              var field = action.method_if_field_has_value[0];
+              var fieldDependentMethod = action.method_if_field_has_value[1];
+              httpConfig.method =
+                (data.hasOwnProperty(field) && data[field] !== null) ? fieldDependentMethod : action.method;
+            } else if (key != 'params' && key != 'isArray' ) {
               httpConfig[key] = copy(value);
             }
           });
@@ -422,7 +429,7 @@ angular.module('djangoRESTResources', ['ng']).
               arguments.length + " arguments.";
           }
           var data = hasBody ? this : undefined;
-          DjangoRESTResource[name].call(this, params, data, success, error);
+          return DjangoRESTResource[name].call(this, params, data, success, error);
         };
       });
 
