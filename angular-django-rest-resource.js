@@ -149,7 +149,9 @@ angular.module('djangoRESTResources', ['ng']).
       'update': {method:'PUT'},
       'query':  {method:'GET', isArray:true},
       'remove': {method:'DELETE'},
-      'delete': {method:'DELETE'}
+      'delete': {method:'DELETE'},
+      //manually paginate the query
+      'queryPaginate':  {method:'GET', isArray:true, paginated:true}
     };
     var noop = angular.noop,
         forEach = angular.forEach,
@@ -358,7 +360,7 @@ angular.module('djangoRESTResources', ['ng']).
 
                   var paginator = function recursivePaginator(data) {
                     // If there is a next page, go ahead and request it before parsing our results. Less wasted time.
-                    if (data.next !== null) {
+                    if (data.next !== null && !action.paginated) {
                       var next_config = copy(httpConfig);
                       next_config.params = {};
                       next_config.url = data.next;
@@ -371,6 +373,8 @@ angular.module('djangoRESTResources', ['ng']).
                     if (data.next == null) {
                       // We've reached the last page, call the original success callback with the concatenated pages of data.
                       (success||noop)(value, response.headers);
+                    } else if (action.paginated) {
+                      (success||noop)(value, data.next, response.headers);
                     }
                   };
                   paginator(data);
