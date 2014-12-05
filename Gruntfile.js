@@ -23,6 +23,19 @@ module.exports = function (grunt) {
         src: ['angular-django-rest-resource.js'],
         title: 'API Documentation'
       }
+    },
+
+    // this is to push the github pages
+    buildcontrol: {
+      dist: {
+        options: {
+          dir: 'dist/docs',
+          remote: 'git@github.com:blacklocus/angular-django-rest-resource.git',
+          branch: 'gh-pages',
+          commit: true,
+          push: true
+        }
+      }
     }
   });
 

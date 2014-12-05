@@ -11,6 +11,7 @@
     "grunt-ngdoc": "^0.1.3"
   },
   "devDependencies": {
+    "grunt-build-control": "^0.2.2",
     "grunt-ngdoc": "^0.1.3",
     "grunt-ngdocs": "^0.2.6",
     "load-grunt-tasks": "^1.0.0",
