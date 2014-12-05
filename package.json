@@ -1,0 +1,43 @@
+{
+  "name": "angular-django-rest-resource",
+  "version": "1.0.3",
+  "description": "An AngularJS module that provides a resource-generation service similar to ngResource, but optimized for the Django REST Framework.",
+  "main": "angular-django-rest-resource.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "grunt": "^0.4.5",
+    "grunt-ngdoc": "^0.1.3"
+  },
+  "devDependencies": {
+    "grunt-ngdoc": "^0.1.3",
+    "grunt-ngdocs": "^0.2.6",
+    "load-grunt-tasks": "^1.0.0",
+    "time-grunt": "^1.0.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blacklocus/angular-django-rest-resource.git"
+  },
+  "keywords": [
+    "AngularJS",
+    "Django",
+    "REST",
+    "Framework",
+    "Angular",
+    "paginate",
+    "pagination",
+    "django-rest-framework",
+    "django-angular"
+  ],
+  "author": "BlackLocus (http://blacklocus.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blacklocus/angular-django-rest-resource/issues"
+  },
+  "homepage": "https://github.com/blacklocus/angular-django-rest-resource"
+}
