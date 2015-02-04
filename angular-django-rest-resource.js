@@ -315,6 +315,9 @@ var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
               arguments.length + " arguments.";
           }
 
+          var paginationLimit = params.paginationLimit || null;
+          params.paginationLimit = undefined;
+
           var value = this instanceof DjangoRESTResource ? this : (action.isArray ? [] : new DjangoRESTResource(data));
           var httpConfig = {},
               promise;
@@ -357,8 +360,14 @@ var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
                   deferSuccess = true;
 
                   var paginator = function recursivePaginator(data) {
+                    // Ok, now load this page's results:
+                    forEach(data.results, function(item) {
+                      value.push(new DjangoRESTResource(item));
+                    });
+                    var morePages = paginationLimit && value.length < paginationLimit;
+
                     // If there is a next page, go ahead and request it before parsing our results. Less wasted time.
-                    if (data.next !== null) {
+                    if (data.next !== null && morePages) {
                       var next_config = copy(httpConfig);
                       next_config.params = {};
                       next_config.url = data.next;
@@ -367,11 +376,9 @@ var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
                         http_promise.error(error);
                       }
                     }
-                    // Ok, now load this page's results:
-                    forEach(data.results, function(item) {
-                      value.push(new DjangoRESTResource(item));
-                    });
-                    if (data.next == null) {
+
+
+                    if (data.next == null || !morePages) {
                       // We've reached the last page, call the original success callback with the concatenated pages of data.
                       (success||noop)(value, response.headers);
                     }
