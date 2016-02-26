@@ -141,7 +141,7 @@
  *   - `$resolved`: true if the promise has been resolved (either with success or rejection);
  *     Knowing if the DjangoRESTResource has been resolved is useful in data-binding.
  */
-angular.module('djangoRESTResources', ['ng']).
+var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
   factory('djResource', ['$http', '$parse', function($http, $parse) {
     var DEFAULT_ACTIONS = {
       'get':    {method:'GET'},
@@ -438,3 +438,5 @@ angular.module('djangoRESTResources', ['ng']).
 
     return DjangoRESTResourceFactory;
   }]);
+
+module.exports = djangoRESTResources;
