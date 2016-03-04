@@ -1,7 +1,7 @@
 {
   "name": "angular-django-rest-resource",
   "main": "angular-django-rest-resource.js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "homepage": "https://github.com/blacklocus/angular-django-rest-resource",
   "authors": [
     "BlackLocus",
