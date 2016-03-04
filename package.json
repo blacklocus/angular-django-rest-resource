@@ -31,5 +31,17 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/cfrantow/angular-django-rest-resource.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/cfrantow/angular-django-rest-resource/issues"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Charlie <cfrantow@gmail.com>"
 }

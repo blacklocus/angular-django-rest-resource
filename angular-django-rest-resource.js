@@ -397,7 +397,7 @@ var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
 
             response.resource = value;
             return response;
-          }, error).then;
+          }, error).then.bind(promise);
 
           return value;
         };
