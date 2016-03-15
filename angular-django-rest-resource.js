@@ -362,7 +362,10 @@ var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
                       var next_config = copy(httpConfig);
                       next_config.params = {};
                       next_config.url = data.next;
-                      $http(next_config).success(function(next_data) { recursivePaginator(next_data); }).error(error);
+                      var http_promise = $http(next_config).success(function(next_data) { recursivePaginator(next_data); })
+                      if (error) {
+                        http_promise.error(error);
+                      }
                     }
                     // Ok, now load this page's results:
                     forEach(data.results, function(item) {
