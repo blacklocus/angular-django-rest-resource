@@ -141,7 +141,7 @@
  *   - `$resolved`: true if the promise has been resolved (either with success or rejection);
  *     Knowing if the DjangoRESTResource has been resolved is useful in data-binding.
  */
-angular.module('djangoRESTResources', ['ng']).
+var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
   factory('djResource', ['$http', '$parse', function($http, $parse) {
     var DEFAULT_ACTIONS = {
       'get':    {method:'GET'},
@@ -315,6 +315,9 @@ angular.module('djangoRESTResources', ['ng']).
               arguments.length + " arguments.";
           }
 
+          var paginationLimit = params.paginationLimit || null;
+          params.paginationLimit = undefined;
+
           var value = this instanceof DjangoRESTResource ? this : (action.isArray ? [] : new DjangoRESTResource(data));
           var httpConfig = {},
               promise;
@@ -357,18 +360,25 @@ angular.module('djangoRESTResources', ['ng']).
                   deferSuccess = true;
 
                   var paginator = function recursivePaginator(data) {
-                    // If there is a next page, go ahead and request it before parsing our results. Less wasted time.
-                    if (data.next !== null) {
-                      var next_config = copy(httpConfig);
-                      next_config.params = {};
-                      next_config.url = data.next;
-                      $http(next_config).success(function(next_data) { recursivePaginator(next_data); }).error(error);
-                    }
                     // Ok, now load this page's results:
                     forEach(data.results, function(item) {
                       value.push(new DjangoRESTResource(item));
                     });
-                    if (data.next == null) {
+                    var morePages = paginationLimit && value.length < paginationLimit;
+
+                    // If there is a next page, go ahead and request it before parsing our results. Less wasted time.
+                    if (data.next !== null && morePages) {
+                      var next_config = copy(httpConfig);
+                      next_config.params = {};
+                      next_config.url = data.next;
+                      var http_promise = $http(next_config).then(function(next_data) { recursivePaginator(next_data); })
+                      if (error) {
+                        http_promise.catch(error);
+                      }
+                    }
+
+
+                    if (data.next == null || !morePages) {
                       // We've reached the last page, call the original success callback with the concatenated pages of data.
                       (success||noop)(value, response.headers);
                     }
@@ -397,7 +407,7 @@ angular.module('djangoRESTResources', ['ng']).
 
             response.resource = value;
             return response;
-          }, error).then;
+          }, error).then.bind(promise);
 
           return value;
         };
@@ -438,3 +448,5 @@ angular.module('djangoRESTResources', ['ng']).
 
     return DjangoRESTResourceFactory;
   }]);
+
+module.exports = djangoRESTResources;
