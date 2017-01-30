@@ -371,9 +371,9 @@ var djangoRESTResources = angular.module('djangoRESTResources', ['ng']).
                       var next_config = copy(httpConfig);
                       next_config.params = {};
                       next_config.url = data.next;
-                      var http_promise = $http(next_config).success(function(next_data) { recursivePaginator(next_data); })
+                      var http_promise = $http(next_config).then(function(next_data) { recursivePaginator(next_data); })
                       if (error) {
-                        http_promise.error(error);
+                        http_promise.catch(error);
                       }
                     }
 
